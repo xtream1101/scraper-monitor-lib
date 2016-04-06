@@ -31,11 +31,14 @@ class ScraperMonitor():
         scraper_data = {'startTime': str(datetime.datetime.utcnow())}
         self._send('/data/start', scraper_data)
 
-    def stop(self):
+    def stop(self, total_urls=None, items_scraped=None):
         """
         Log that the scraper has stopped
         """
-        scraper_data = {'stopTime': str(datetime.datetime.utcnow())}
+        scraper_data = {'stopTime': str(datetime.datetime.utcnow()),
+                        'totalUrls': total_urls,
+                        'itemsScraped': items_scraped,
+                        }
         self._send('/data/stop', scraper_data)
 
     def _send(self, endpoint, data={}):
