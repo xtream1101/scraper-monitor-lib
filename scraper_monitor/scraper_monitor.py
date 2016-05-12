@@ -82,7 +82,7 @@ class ScraperMonitor():
     ##
     ###########################################################################
     ###########################################################################
-    def failed_url(self, url, reason, status_code=None, num_tries=None):
+    def failed_url(self, url, reason, ref_id=None, ref_table=None, status_code=None, num_tries=None):
         """
         Log any urls that did not meet the requirements of being successful
         """
@@ -90,6 +90,8 @@ class ScraperMonitor():
 
         scraper_data = {'url': url,
                         'reason': reason,
+                        'ref_id': ref_id,
+                        'ref_table': ref_table,
                         'statusCode': status_code,
                         'numTries': num_tries,
                         'threadName': thread_name,
