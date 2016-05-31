@@ -31,13 +31,15 @@ class ScraperMonitor():
         scraper_data = {'startTime': str(datetime.datetime.utcnow())}
         self._send('/data/start', scraper_data)
 
-    def stop(self, total_urls=None, items_scraped=None):
+    def stop(self, total_urls=None, ref_data_success_count=None, ref_data_count=None, rows_added_to_db=None):
         """
         Log that the scraper has stopped
         """
         scraper_data = {'stopTime': str(datetime.datetime.utcnow()),
                         'totalUrls': total_urls,
-                        'itemsScraped': items_scraped,
+                        'refDataSuccessCount': ref_data_success_count,
+                        'refDataCount': ref_data_count,
+                        'rowsAddedToDb': rows_added_to_db,
                         }
         self._send('/data/stop', scraper_data)
 
