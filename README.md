@@ -9,4 +9,4 @@ Developed using Python 3.5 (use at least 3.4.2+)
 
 ## Usage
 
-### **from scraper_monitor import ScraperMonitor**
+### **from scraper_monitor import scraper_monitor**
