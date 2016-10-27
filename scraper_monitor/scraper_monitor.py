@@ -11,7 +11,7 @@ class ScraperMonitor():
     def __init__(self):
         self.config = {}
 
-    def start(self, scraper_name, host, apikey, scraper_key, scraper_run, environment):
+    def start(self, scraper_name=None, host=None, apikey=None, scraper_key=None, scraper_run=None, environment=None, machine_name=None):
         """
         Log that the scraper has started
         Pass the unique data for this scraper instance like `scraper_run` which is the scrape_id
@@ -26,6 +26,7 @@ class ScraperMonitor():
         self.config['scraper_key'] = scraper_key
         self.config['scraper_run'] = scraper_run
         self.config['environment'] = environment
+        self.config['machine_name'] = machine_name
 
         # Tell the server we started the scraper
         scraper_data = {'startTime': str(datetime.datetime.utcnow())}
@@ -51,29 +52,35 @@ class ScraperMonitor():
             logger.warning("Cannot send data, scraper monitor never started")
             return
 
-        if not endpoint.startswith('/'):
-            endpoint = '/' + endpoint
+        if self.config.get('host') is None:
+            logger.critical("Must provide a host for the Scraper Monitor")
+            return
 
-        if not self.config['host'].endswith('/'):
-            self.config['host'] += '/'
+        if endpoint.startswith('/'):
+            endpoint = endpoint[1:]
 
-        server_url = "{}api/v1{}?apikey={}&scraperKey={}&scraperRun={}&environment={}"\
-                     .format(self.config['host'],
-                             endpoint,
-                             self.config['apikey'],
-                             self.config['scraper_key'],
-                             self.config['scraper_run'],
-                             self.config['environment'],
+        if self.config['host'].endswith('/'):
+            self.config['host'] = self.config['host'][:-1]
+
+        server_url = "{host}/api/v1/{ep}?apikey={apikey}&scraperKey={scraper_key}&scraperRun={run_id}&environment={env}"\
+                     .format(host=self.config['host'],
+                             ep=endpoint,
+                             apikey=self.config['apikey'],
+                             scraper_key=self.config['scraper_key'],
+                             run_id=self.config['scraper_run'],
+                             env=self.config['environment'],
                              )
         try:
-            r = requests.post(server_url, json=data, timeout=10.00).json()
-            if r['success'] is not True:
+            r = requests.post(server_url, json=data, timeout=10).json()
+            if r.get('success') is not True:
                 logger.error("Failed to send data to Scraper Monitor {} - {} "
-                             .format(endpoint, r['message']))
+                             .format(endpoint, r.get('message')))
         except KeyError:
-            logger.exception(r['message'])
+            logger.exception(r.get('message'))
+
         except requests.exceptions.Timeout:
             logger.exception("Request timeout while sending scraper data")
+
         except Exception:
             logger.exception("Something broke in sending scraper data")
 
