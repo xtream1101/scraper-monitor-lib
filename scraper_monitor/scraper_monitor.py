@@ -79,10 +79,15 @@ class ScraperMonitor():
             logger.exception(r.get('message'))
 
         except requests.exceptions.Timeout:
-            logger.exception("Request timeout while sending scraper data")
+            except_message = "Request timeout while sending scraper data"
+            logger.error(except_message)
+            logger.debug(except_message, exc_info=True)
 
         except Exception:
-            logger.exception("Something broke in sending scraper data")
+            except_message = "Something broke in sending scraper data"
+            print(except_message)
+            logger.error(except_message)
+            logger.debug(except_message, exc_info=True)
 
     ###########################################################################
     ###########################################################################
